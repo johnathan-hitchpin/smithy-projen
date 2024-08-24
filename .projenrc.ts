@@ -1,4 +1,5 @@
 import { cdk } from 'projen';
+import { NodePackageManager } from 'projen/lib/javascript';
 const project = new cdk.JsiiProject({
   author: 'Johnathan',
   authorAddress: 'johnathan@hitchpin.com',
@@ -6,11 +7,13 @@ const project = new cdk.JsiiProject({
   jsiiVersion: '~5.4.0',
   name: 'smithy-projen',
   projenrcTs: true,
+  projenDevDependency: false,
+  packageManager: NodePackageManager.PNPM,
   repositoryUrl: 'https://github.com/johnathan/smithy-projen.git',
-
-  // deps: [],                /* Runtime dependencies of this module. */
-  // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */
-  // devDeps: [],             /* Build dependencies for this module. */
-  // packageName: undefined,  /* The "name" in package.json. */
+  eslint: false,
+  deps: [
+    'projen',
+    'constructs'
+  ],
 });
 project.synth();

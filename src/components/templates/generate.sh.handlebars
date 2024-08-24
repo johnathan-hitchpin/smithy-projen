@@ -1,0 +1,71 @@
+#!/bin/zsh
+
+set -euxo
+
+rm -rf ./tmp || true
+
+# PNPM symlinks workspace packages, and Docker won't follow symlinks, so copy first
+cp -r ./node_modules/@smithy-dot-net/compatibility-api-model/build ./tmp
+
+docker build -t smithydotnet-codegen-source-generator --output type=local,dest=output .
+
+update_json() {
+  JSONPATH=$1
+  PROP=$2
+  VAL=$3
+  TMP=$(mktemp)
+  jq ".$PROP = $VAL" $JSONPATH > "$TMP"
+  mv $TMP $JSONPATH
+}
+
+update_name_description() {
+  PKG=$1
+  NAME=$2
+  DESCRIPTION=$3
+
+  BUILD="concurrently 'pnpm run build:cjs' 'pnpm run build:es' 'pnpm run build:types'"
+  PREPACK="pnpm run clean && pnpm run build"
+
+  update_json "./output/$PKG/package.json" 'name' "\"$NAME\""
+  update_json "./output/$PKG/package.json" 'description' "\"$DESCRIPTION\""
+  update_json "./output/$PKG/package.json" 'scripts.build' "\"$BUILD\""
+  update_json "./output/$PKG/package.json" 'scripts.prepack' "\"$PREPACK\""
+
+  update_json "./output/$PKG/tsconfig.json" 'compilerOptions.incremental' "false"
+}
+
+clean_node_package () {
+  PKG=$1
+  rm -rf "../$PKG/src" || true
+  rm -rf "../$PKG/node_modules" || true
+  rm -rf "../$PKG/dist-cjs" || true
+  rm -rf "../$PKG/dist-es" || true
+  rm -rf "../$PKG/dist-types" || true
+  rm -rf "../$PKG/tsconfig*" || true
+  rm "../$PKG/typedoc.json" || true
+}
+
+echo 'Updating package.json files...'
+update_name_description typescript-client "@smithy-dot-net/compatibility-api-client" "@smithy-dot-net/compatibility-api-client"
+update_name_description server-ssdk "@smithy-dot-net/compatibility-server-ssdk" "@smithy-dot-net/compatibility-server-ssdk"
+
+echo 'Cleaning client...'
+clean_node_package "typescript-client" || true
+
+echo 'Cleaning server-ssdk'
+clean_node_package "server-ssdk"
+
+if [ -d './build' ]; then rm -rf './build'; fi
+mkdir ./build
+
+echo 'Copying model...'
+cp output/model.json ./build/model.json
+
+echo 'Copying typescript-client...'
+cp -r ./output/typescript-client/ ../typescript-client/
+
+echo 'Copying server-ssdk...'
+cp -r ./output/server-ssdk/ ../server-ssdk/
+
+rm -rf ./tmp
+rm -rf ./output

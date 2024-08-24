@@ -1,0 +1,14 @@
+{
+  "version": "1.0",
+  "outputDirectory": "{{tsServerOutputDirectory}}",
+  "projections": {
+    "ts-server": {
+      "plugins": {
+        "typescript-ssdk-codegen": {
+          "package": "{{tsServerPackageName}}",
+          "packageVersion": "{{tsServerPackageSemver}}"      
+        }
+      }
+    }
+  }
+}

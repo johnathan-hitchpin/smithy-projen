@@ -1,0 +1,56 @@
+/*
+ *  Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License").
+ *  You may not use this file except in compliance with the License.
+ *  A copy of the License is located at
+ *
+ *   http://aws.amazon.com/apache2.0
+ *
+ *  or in the "license" file accompanying this file. This file is distributed
+ *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ *  express or implied. See the License for the specific language governing
+ *  permissions and limitations under the License.
+ */
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath '{{projectGroup}}:{{modelProjectId}}:{{projectVersion}}'
+        classpath "software.amazon.smithy:smithy-model:{{smithyVersion}}"
+        classpath "software.amazon.smithy:smithy-openapi:{{smithyVersion}}"
+        classpath "software.amazon.smithy:smithy-aws-traits:{{smithyVersion}}"
+        classpath "software.amazon.smithy:smithy-aws-apigateway-openapi:{{smithyVersion}}"
+        classpath "software.amazon.smithy:smithy-cli:{{smithyCliVersion}}"
+    }
+}
+
+plugins {
+    id 'software.amazon.smithy' version '{{smithyPluginVersion}}'
+    id 'maven-publish'
+}
+
+group = '{{projectGroup}}'
+version = '{{projectVersion}}'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'software.amazon.smithy:smithy-model:{{smithyVersion}}'
+    implementation 'software.amazon.smithy:smithy-aws-traits:{{smithyVersion}}'
+    implementation "software.amazon.smithy:smithy-aws-apigateway-openapi:{{smithyVersion}}"
+    implementation 'software.amazon.smithy:smithy-validation-model:{{smithyVersion}}'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}

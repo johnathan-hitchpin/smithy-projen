@@ -1,0 +1,45 @@
+$version: "2"
+namespace {{projectGroup}}
+
+/// Provides weather forecasts.
+service {{serviceName}} {
+    version: "{{apiVersion}}"
+    resources: [
+        City
+    ]
+}
+
+resource City {
+    identifiers: { cityId: CityId }
+    read: GetCity
+    list: ListCities
+    resources: [
+        Forecast
+    ]
+}
+
+resource Forecast {
+    identifiers: { cityId: CityId }
+    read: GetForecast
+}
+structure CityCoordinates {
+    @required
+    latitude: Float
+
+    @required
+    longitude: Float
+}
+
+structure GetCityOutput for City {
+    $coordinates
+}
+
+resource Forecast {
+    identifiers: { cityId: CityId }
+    properties: { chanceOfRain: Float }
+    read: GetForecast
+}
+
+structure GetForecastOutput for Forecast {
+    $chanceOfRain
+}

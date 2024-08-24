@@ -1,0 +1,18 @@
+{
+    "version": "1.0",
+    "outputDirectory": "{{openApiOutputDirectory}}",
+    "projections": {
+      "apigateway": {
+        "imports": [
+          "model/"
+        ],
+        "plugins": {
+          "openapi": {
+            "service": "{{openApiTargetService}}",
+            "protocol": "{{openApiProtocol}}",
+            "apiGatewayType": "REST"
+          }
+        }
+      }
+    }
+  }

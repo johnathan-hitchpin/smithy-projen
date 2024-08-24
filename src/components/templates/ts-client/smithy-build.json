@@ -1,0 +1,14 @@
+{
+    "version": "1.0",
+    "outputDirectory": "{{tsClientOutputDirectory}}",
+    "projections": {
+      "ts-client": {
+        "plugins": {
+          "typescript-codegen": {
+            "package": "{{tsClientPackageName}}",
+            "packageVersion": "{{tsClientPackageSemver}}"
+          }
+        }
+      }
+    }
+  }
